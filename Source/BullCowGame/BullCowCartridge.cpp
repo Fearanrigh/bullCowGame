@@ -10,19 +10,19 @@ void UBullCowCartridge::BeginPlay() // When the game starts
     SetupGame();
 }
 
-void UBullCowCartridge::OnInput(const FString& Input) // When the player hits enter
+void UBullCowCartridge::OnInput(const FString& PlayerInput) // When the player hits enter
 {
     if(bGameOver) {
         ClearScreen();
         SetupGame();
     }
     else { // Checking player guess.
-        ProcessGuess(Input);
+        ProcessGuess(PlayerInput);
     }
 }
 
 void UBullCowCartridge::SetupGame() {
-    HiddenWord = TEXT("cakes");
+    HiddenWord = Words[FMath::RandRange(0, Words.Num() - 1)];
     Lives = HiddenWord.Len();
     bGameOver = false;
 
@@ -31,9 +31,10 @@ void UBullCowCartridge::SetupGame() {
     PrintLine(TEXT("You have %i lives"), Lives);
     PrintLine(TEXT("Guess the %i letter word"), HiddenWord.Len());
     PrintLine(TEXT("Enter your guess, and press enter..."));
+//    PrintLine(TEXT("The hidden word is: %s"), *HiddenWord);
 }
 
-bool UBullCowCartridge::IsIsogram(FString Word) const {
+bool UBullCowCartridge::IsIsogram(const FString& Word) const {
     for(int32 i = 0; i < Word.Len(); i++) {
         for(int32 j = i+1; j < Word.Len(); j++) {
             if(Word[i] == Word[j]) {
@@ -50,7 +51,7 @@ void UBullCowCartridge::EndGame() {
     
 }
 
-void UBullCowCartridge::ProcessGuess(FString Guess) {
+void UBullCowCartridge::ProcessGuess(const FString& Guess) {
     if(Guess == HiddenWord) {
         PrintLine(TEXT("You Win!"));
         EndGame();
@@ -85,5 +86,29 @@ void UBullCowCartridge::ProcessGuess(FString Guess) {
     }
 
     // Show player the bulls and the cows
+    int32 Bulls, Cows;
+    GetBullCows(Guess, Bulls, Cows);
+    
+    PrintLine(TEXT("You have %i Bulls and %i Cows"), Bulls, Cows);
+    
     PrintLine(TEXT("Guess again, you have %i lives left"), Lives);
+}
+
+void UBullCowCartridge::GetBullCows(const FString& Guess, int32& BullCount, int32& CowCount) const {
+    BullCount = 0;
+    CowCount = 0;
+    
+    for (int32 i = 0; i < Guess.Len(); i++) {
+        if (Guess[i] == HiddenWord[i]) {
+            BullCount++;
+            continue;
+        }
+        
+        for (int32 j = 0; j < HiddenWord.Len(); j++) {
+            if (Guess[i] == HiddenWord[j]) {
+                CowCount++;
+                break;
+            }
+        }
+    }
 }
