@@ -17,6 +17,7 @@ public:
     void SetupGame();
     void EndGame();
     void ProcessGuess(FString Guess);
+    bool IsIsogram(FString Word) const;
     
     // Your declarations go below!
 private:

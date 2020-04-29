@@ -32,6 +32,17 @@ void UBullCowCartridge::SetupGame() {
     PrintLine(TEXT("Enter your guess, and press enter..."));
 }
 
+bool UBullCowCartridge::IsIsogram(FString Word) const {
+    for(int32 i = 0; i < Word.Len(); i++) {
+        for(int32 j = i+1; j < Word.Len(); j++) {
+            if(Word[i] == Word[j]) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 void UBullCowCartridge::EndGame() {
     bGameOver = true;
     PrintLine(TEXT("Would you like to play again?"));
@@ -45,11 +56,6 @@ void UBullCowCartridge::ProcessGuess(FString Guess) {
         return;
     }
     
-//    // Check if isogram
-//    if(!IsIsogram) {
-//        PrintLine(TEXT("No repeating letters, guess again."));
-//    }
-    
     // Prompt to guess again
     // Check if right number of characters
     if(Guess.Len() != HiddenWord.Len()) {
@@ -58,6 +64,12 @@ void UBullCowCartridge::ProcessGuess(FString Guess) {
         return;
     }
     
+    // Check if isogram
+    if(!IsIsogram(Guess)) {
+        PrintLine(TEXT("No repeating letters, guess again."));
+        return;
+    }
+
     // Remove life
     PrintLine(TEXT("You've lost a life!"));
     --Lives;
