@@ -18,21 +18,6 @@ void UBullCowCartridge::OnInput(const FString& Input) // When the player hits en
     else { // Checking player guess.
         ProcessGuess(Input);
     }
-    
-    // Check if isogram
-    // Prompt to guess again
-    // Check if right number of characters
-    // Prompt to guess again
-    
-    // Remove life
-    
-    // Check if lives > 0
-    // If yes, guess again
-    // Show lives left
-    // If no, show gameover and HiddenWord
-    // Prompt to play again, press enter to play again?
-    // Check user input
-    // Play again or quit?
 }
 
 void UBullCowCartridge::SetupGame() {
@@ -49,7 +34,8 @@ void UBullCowCartridge::SetupGame() {
 
 void UBullCowCartridge::EndGame() {
     bGameOver = true;
-    PrintLine(TEXT("Press enter to play again"));
+    PrintLine(TEXT("Would you like to play again?"));
+    
 }
 
 void UBullCowCartridge::ProcessGuess(FString Guess) {
@@ -58,16 +44,33 @@ void UBullCowCartridge::ProcessGuess(FString Guess) {
         EndGame();
         return;
     }
-
-    Lives--;
+    
+//    // Check if isogram
+//    if(!IsIsogram) {
+//        PrintLine(TEXT("No repeating letters, guess again."));
+//    }
+    
+    // Prompt to guess again
+    // Check if right number of characters
+    if(Guess.Len() != HiddenWord.Len()) {
+        PrintLine(TEXT("The word is %i letters long."), HiddenWord.Len());
+        PrintLine(TEXT("Try another guess, you have %i lives left."), Lives);
+        return;
+    }
+    
+    // Remove life
     PrintLine(TEXT("You've lost a life!"));
-    if(Lives > 0) {
-        if(Guess.Len() != HiddenWord.Len()) {
-            PrintLine(TEXT("Try another guess, you have %i lives left."), Lives);
-        }
-    }
-    else {
+    --Lives;
+    
+    // Check if lives > 0
+    if(Lives <= 0) {
+        ClearScreen();
         PrintLine(TEXT("You have no lives left!"));
+        PrintLine(TEXT("The hidden word was %s"), *HiddenWord);
         EndGame();
+        return;
     }
+
+    // Show player the bulls and the cows
+    PrintLine(TEXT("Guess again, you have %i lives left"), Lives);
 }
